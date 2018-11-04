@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Test Result" max_length="40" name="x_202208_utf_test_result" type="collection">
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Log" mandatory="true" max_length="256" name="log" type="string"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" mandatory="true" max_length="40" name="number" type="string"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" choice="1" label="Result" mandatory="true" max_length="40" name="result" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Fail" value="fail"/>
+                <element inactive_on_update="false" label="Pass" value="pass"/>
+            </choice>
+        </element>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Result Set" mandatory="true" max_length="32" name="result_set" reference="x_202208_utf_result_set" type="reference"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Unit Test" mandatory="true" max_length="32" name="unit_test" reference="x_202208_utf_unit_test" type="reference"/>
+        <index name="index">
+            <element name="unit_test"/>
+        </index>
+        <index name="index2">
+            <element name="result_set"/>
+        </index>
+    </element>
+</database>

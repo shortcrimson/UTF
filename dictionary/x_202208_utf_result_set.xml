@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Result Set" max_length="40" name="x_202208_utf_result_set" type="collection">
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" mandatory="true" max_length="40" name="number" type="string"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Test Suite" mandatory="true" max_length="32" name="test_suite" reference="x_202208_utf_test_suite" type="reference"/>
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return '';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" label="Unit Tests" mandatory="true" max_length="4000" name="unit_tests" reference="x_202208_utf_unit_test" type="glide_list"/>
+        <index name="index">
+            <element name="test_suite"/>
+        </index>
+    </element>
+</database>

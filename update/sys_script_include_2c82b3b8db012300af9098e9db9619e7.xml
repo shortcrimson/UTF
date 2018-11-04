@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_202208_utf.UTFProcessor</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>UTFProcessor</name>
+        <script><![CDATA[/*
+ * Unit Testing Framework
+ * Processing framework - contains core functionality
+ * Author: Toby Jones
+ * 21/10/18
+ */
+var UTFProcessor = Class.create();
+UTFProcessor.prototype = {
+
+
+	/*
+	 * Pass in a test suite to identify tests from
+	 * Process attributes into parameters for ease of use throughout the script
+	 * Optional second parameter will allow for a limited number of test to be run
+	 * ie, individual test and not whole suite
+	 * Still associated with the suite for ease of use
+	 */
+	initialize: function(testSuite, unitTests /*optional*/) {
+
+		this._testSuiteID = testSuite;
+		//If there is no second parameter, get all tests for the current suite
+		if (unitTests == '' || unitTests == undefined) {
+			this._testSysIDs = this._getAllTests();
+		} else {
+			this._testSysIDs = unitTests;
+		}
+		this._resSetID = '';
+		this.error = '';
+
+	},
+
+
+	/*
+	 * Top-level function to call to run the test suite
+	 * Instantiate the result set and define which tests to run
+	 */
+	processSuite: function() {
+
+		//Generate the result set
+		var resSet = new GlideRecord('x_202208_utf_result_set');
+		resSet.newRecord();
+		resSet.test_suite = this._testSuiteID;
+		resSet.unit_tests = this._testSysIDs;
+		this._resSetID = resSet.insert();
+
+		//Re-retrieve the result set due to potential issues with the above GlideRecord being inserted
+		var grResSet = new GlideRecord('x_202208_utf_result_set');
+		if (grResSet.get(this._resSetID)) {
+
+			var testIDs = grResSet.unit_tests.split(',');
+			for (var test in testIDs) {
+				this._processUnitTest(testIDs[test]);
+			}
+
+		} else {
+			//This should never trigger as it's just been created
+			this.error = 'Result Set Instantiated but could not be found - ' + this._resSetID;
+			return;
+		}
+
+	},
+
+	//Retrieve error message
+	getErrorMsg: function() {
+		return this.error;
+	},
+
+	/*
+	 * Process an individual unit test and generate a result record
+	 * The result will be associated with a result set based on the '_resSetID' global param
+	 * Test scripts need to return in the following format:
+	 * "Result::Message", eg. "Pass::Test Successful" or "Fail::Function not found"
+	 */
+	_processUnitTest: function(testID) {
+
+		//If there's no result set there's nowhere to put the result
+		if (this._resSetID == '' || this._resSetID == undefined) {
+			this.error = 'No Result Set found!';
+			return;
+		}
+
+		var grUTest = new GlideRecord('x_202208_utf_unit_test');
+		if (grUTest.get(testID)) {
+
+			var gse = new GlideScopedEvaluator();
+			var testResult = gse.evaluateScript(grUTest, 'test');
+
+			var grResult = new GlideRecord('x_202208_utf_test_result');
+			grResult.newRecord();
+			grResult.result_set = this._resSetID;
+			grResult.unit_test = grUTest.sys_id;
+			grResult.result = testResult.split('::')[0].toLowerCase();
+			grResult.log = testResult.split('::')[1];
+			grResult.insert();
+
+		} else {
+			this.error = 'Unit Test ' + testID + ' Not Found!';
+			return;
+		}
+	},
+
+	//Get a toStringed array of all test sys_ids associated with the current test suite
+	_getAllTests: function() {
+		var testArr = [];
+
+		var grTest = new GlideRecord('x_202208_utf_unit_test');
+		grTest.addActiveQuery();
+		grTest.addQuery('test_suite', this._testSuiteID);
+		grTest.query();
+
+		while (grTest.next()) {
+			testArr.push(grTest.sys_id.toString());
+		}
+
+		return testArr.toString();
+	},
+
+	type: 'UTFProcessor'
+};
+
+
+
+
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>toby.jones</sys_created_by>
+        <sys_created_on>2018-10-07 13:14:19</sys_created_on>
+        <sys_id>2c82b3b8db012300af9098e9db9619e7</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>UTFProcessor</sys_name>
+        <sys_package display_value="Unit Testing Framework" source="x_202208_utf">8ee03924db45a300af9098e9db96194d</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Unit Testing Framework">8ee03924db45a300af9098e9db96194d</sys_scope>
+        <sys_update_name>sys_script_include_2c82b3b8db012300af9098e9db9619e7</sys_update_name>
+        <sys_updated_by>toby.jones</sys_updated_by>
+        <sys_updated_on>2018-10-28 16:43:33</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_202208_utf.UTFUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>UTFUtils</name>
+        <script><![CDATA[/*
+ * Unit Testing Framework
+ * Utilities - any functions that don't fall into the core framework
+ * Author: Toby Jones
+ * 04/11/18
+ */
+var UTFUtils = Class.create();
+UTFUtils.prototype = {
+
+    initialize: function() {
+    },
+
+    //Pass in a SI sys_id and return true/false as to whether
+    //it has associated test suites
+    //Used for condition on 'Run Test Suites' button
+    hasTestSuites: function(scriptID) {
+    	var grTS = new GlideRecord('x_202208_utf_test_suite');
+    	grTS.addQuery('active', true);
+    	grTS.addQuery('script_record', scriptID);
+    	grTS.query();
+    	if (grTS.hasNext()) {
+    		return true;
+    	}
+    	return false;
+    },
+
+    //Wrapper to be called from a script include to run all active test suites
+    runAllSuites: function(scriptID) {
+		var grTS = new GlideRecord('x_202208_utf_test_suite');
+    	grTS.addQuery('active', true);
+		grTS.addQuery('script_record', scriptID);
+		grTS.query();
+		
+		gs.info('UTFUtils - runAlLSuites - Found ' + grTS.getRowCount() + ' rows');
+		
+		while (grTS.next()) {
+			var utf = new UTFProcessor(grTS.sys_id);
+			utf.processSuite();
+		}
+    },
+
+    type: 'UTFUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>toby.jones</sys_created_by>
+        <sys_created_on>2018-11-04 11:07:38</sys_created_on>
+        <sys_id>d901e3f5db212300af9098e9db961915</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>UTFUtils</sys_name>
+        <sys_package display_value="Unit Testing Framework" source="x_202208_utf">8ee03924db45a300af9098e9db96194d</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Unit Testing Framework">8ee03924db45a300af9098e9db96194d</sys_scope>
+        <sys_update_name>sys_script_include_d901e3f5db212300af9098e9db961915</sys_update_name>
+        <sys_updated_by>toby.jones</sys_updated_by>
+        <sys_updated_on>2018-11-04 11:16:05</sys_updated_on>
+    </sys_script_include>
+</record_update>
